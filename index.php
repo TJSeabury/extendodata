@@ -11,6 +11,24 @@
 
 declare(strict_types=1);
 
+// Exit if accessed directly.
+if (!defined('ABSPATH')) {
+  die();
+}
+
+if (!function_exists('get_core_updates')) {
+  require_once ABSPATH . 'wp-admin/includes/update.php';
+}
+if (!function_exists('got_url_rewrite')) {
+  require_once ABSPATH . 'wp-admin/includes/misc.php';
+}
+if (!class_exists('WP_Debug_Data')) {
+  require_once ABSPATH . 'wp-admin/includes/class-wp-debug-data.php';
+}
+if (!class_exists('WP_Site_Health')) {
+  require_once ABSPATH . 'wp-admin/includes/class-wp-site-health.php';
+}
+
 
 /**
  * Callback function for the custom REST API endpoint.
@@ -19,10 +37,26 @@ declare(strict_types=1);
  */
 function get_site_health_report()
 {
-  $site_health = wp_get_site_health_check();
+  $health_check_site_status = WP_Site_Health::get_instance();
+
+  WP_Debug_Data::check_for_updates();
+
+  // Remove all filters registered to  the 'debug_information' hook
+  remove_all_filters('debug_information');
+
+  $info = WP_Debug_Data::debug_data();
+
+  $sizes = WP_Debug_Data::get_sizes();
+
+  $info['wp-paths-sizes']['fields']['wordpress_size'] = $sizes['wordpress_size'];
+  $info['wp-paths-sizes']['fields']['uploads_size'] = $sizes['uploads_size'];
+  $info['wp-paths-sizes']['fields']['themes_size'] = $sizes['themes_size'];
+  $info['wp-paths-sizes']['fields']['plugins_size'] = $sizes['plugins_size'];
+  $info['wp-paths-sizes']['fields']['database_size'] = $sizes['database_size'];
+  $info['wp-paths-sizes']['fields']['total_size'] = $sizes['total_size'];
 
   // Return the Site Health data as JSON
-  return rest_ensure_response($site_health);
+  return rest_ensure_response($info);
 }
 
 
@@ -36,9 +70,10 @@ function get_site_health_report()
  */
 function custom_site_health_endpoint()
 {
-  register_rest_route('custom/v1', '/site-health', array(
+  register_rest_route('extendodata/v1', '/site-health', array(
     'methods' => 'GET',
     'callback' => 'get_site_health_report',
+    //'permission_callback' => '__return_true',
     'permission_callback' => function () {
       return current_user_can('edit_posts');
     },

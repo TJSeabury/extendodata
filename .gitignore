@@ -1,0 +1,41 @@
+# Ignore build files and directories
+/build/
+/dist/
+/node_modules/
+/vendor/
+.vscode/
+
+# Ignore log files
+*.log
+
+# Ignore configuration files
+*.env
+*.ini
+*.conf
+
+# Ignore database files
+*.sql
+*.sqlite
+
+# Ignore compiled files
+*.min.css
+*.min.js
+
+# Ignore package lock files
+package-lock.json
+yarn.lock
+
+# Ignore WordPress core files
+wp-admin/
+wp-includes/
+wp-content/plugins/hello.php
+wp-config.php
+
+# Ignore plugin-specific files
+*.pot
+*.po
+*.mo
+*.zip
+*.bak
+*.swp
+*.DS_Store

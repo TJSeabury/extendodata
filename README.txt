@@ -9,7 +9,7 @@ License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
 == Description ==
 
-This plugin adds a REST API endpoint that returns the Site Health data as JSON. 
+This Wordpress plugin adds a REST API endpoint that returns the Site Health data as JSON. 
 The endpoint is accessible at /wp-json/custom/v1/site-health.
 
 == Installation ==
